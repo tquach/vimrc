@@ -1164,7 +1164,7 @@ function! s:Edit(cmd,bang,...) abort
       return 'redraw|echo '.string(':!'.git.' '.args)
     else
       let temp = resolve(tempname())
-      let s:temp_files[temp] = { 'dir': buffer.repo().dir(), 'args': arglist }
+      let s:temp_files[tolower(temp)] = { 'dir': buffer.repo().dir(), 'args': arglist }
       silent execute a:cmd.' '.temp
       if a:cmd =~# 'pedit'
         wincmd P
@@ -1392,8 +1392,18 @@ call s:command("-bar -nargs=* -complete=customlist,s:EditComplete Gsdiff :execut
 
 augroup fugitive_diff
   autocmd!
-  autocmd BufWinLeave * if &diff && s:diff_window_count() == 2 && getbufvar(+expand('<abuf>'), 'git_dir') !=# '' | call s:diffoff_all(getbufvar(+expand('<abuf>'), 'git_dir')) | endif
-  autocmd BufWinEnter * if &diff && s:diff_window_count() == 1 && getbufvar(+expand('<abuf>'), 'git_dir') !=# '' | call s:diffoff() | endif
+  autocmd BufWinLeave *
+        \ if getwinvar(bufwinnr(+expand('<abuf>')), '&diff') &&
+        \     s:diff_window_count() == 2 &&
+        \     !empty(getbufvar(+expand('<abuf>'), 'git_dir')) |
+        \   call s:diffoff_all(getbufvar(+expand('<abuf>'), 'git_dir')) |
+        \ endif
+  autocmd BufWinEnter *
+        \ if getwinvar(bufwinnr(+expand('<abuf>')), '&diff') &&
+        \     s:diff_window_count() == 1 &&
+        \     !empty(getbufvar(+expand('<abuf>'), 'git_dir')) |
+        \   call s:diffoff() |
+        \ endif
 augroup END
 
 function! s:diff_window_count() abort
@@ -1689,7 +1699,7 @@ function! s:Blame(bang,line1,line2,count,args) abort
         setlocal scrollbind nowrap nofoldenable
         let top = line('w0') + &scrolloff
         let current = line('.')
-        let s:temp_files[temp] = { 'dir': s:repo().dir(), 'args': cmd }
+        let s:temp_files[tolower(temp)] = { 'dir': s:repo().dir(), 'args': cmd }
         exe 'keepalt leftabove vsplit '.temp
         let b:fugitive_blamed_bufnr = bufnr
         let w:fugitive_leave = restore
@@ -1765,7 +1775,7 @@ function! s:BlameCommit(cmd) abort
             let offset -= 1
           endif
         endwhile
-        return 'if foldlevel(".")|foldopen!|endif'
+        return 'normal! zv'
       endif
     endwhile
     execute head
@@ -2333,10 +2343,10 @@ endif
 augroup fugitive_temp
   autocmd!
   autocmd BufNewFile,BufReadPost *
-        \ if has_key(s:temp_files,expand('<afile>:p')) |
-        \   let b:git_dir = s:temp_files[expand('<afile>:p')].dir |
+        \ if has_key(s:temp_files,tolower(expand('<afile>:p'))) |
+        \   let b:git_dir = s:temp_files[tolower(expand('<afile>:p'))].dir |
         \   let b:git_type = 'temp' |
-        \   let b:git_args = s:temp_files[expand('<afile>:p')].args |
+        \   let b:git_args = s:temp_files[tolower(expand('<afile>:p'))].args |
         \   call fugitive#detect(expand('<afile>:p')) |
         \   setlocal bufhidden=delete |
         \   nnoremap <buffer> <silent> q    :<C-U>bdelete<CR>|
@@ -2476,7 +2486,7 @@ function! s:GF(mode) abort
         endwhile
         let offset += matchstr(getline(lnum), type.'\zs\d\+')
         let ref = getline(search('^'.type.'\{3\} [ab]/','bnW'))[4:-1]
-        let dcmd = '+'.offset.'|if foldlevel(".")|foldopen!|endif'
+        let dcmd = '+'.offset.'|normal! zv'
         let dref = ''
 
       elseif getline('.') =~# '^rename from '

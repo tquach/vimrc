@@ -262,7 +262,7 @@ function! s:state_proto.update_stops()
 
 		for pos in self.stops
 			if pos == self.cur_stop | continue | endif
-			let changed = pos[0] == curLine && pos[1] > self.start_col
+			let changed = pos[0] == curLine && pos[1] > self.cur_stop[1]
 			let changedVars = 0
 			let endPlaceholder = pos[2] - 1 + pos[1]
 			" Subtract changeLen from each tab stop that was after any of
@@ -321,7 +321,8 @@ function! s:state_proto.update_changes()
 	let self.end_col += change_len
 
 	let col = col('.')
-	if line('.') != self.cur_stop[0] || col < self.start_col || col > self.end_col
+	if mode() == 'i' && (line('.') != self.cur_stop[0]
+				\ || col < self.start_col || col > self.end_col)
 		call self.remove()
 	elseif self.has_vars
 		call self.update_vars(change_len)
@@ -336,6 +337,7 @@ function! s:state_proto.update_vars(change)
 	let newWord = strpart(getline('.'), self.start_col - 1, newWordLen)
 	let changeLen = a:change
 	let curLine = line('.')
+	let curCol = col('.')
 	let oldStartSnip = self.start_col
 	let updateTabStops = changeLen != 0
 	let i = 0
@@ -374,7 +376,7 @@ function! s:state_proto.update_vars(change)
 	" Reposition the cursor in case a var updates on the same line but before
 	" the current tabstop
 	if oldStartSnip != self.start_col || mode() == 'i'
-		call cursor(0, col('.') + self.start_col - oldStartSnip)
+		call cursor(0, curCol + self.start_col - oldStartSnip)
 	endif
 endfunction
 
