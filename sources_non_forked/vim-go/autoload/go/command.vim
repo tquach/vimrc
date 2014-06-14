@@ -68,7 +68,7 @@ function! go#command#Test()
 
     let errors = getqflist()
     if !empty(errors)
-        cc 1 "jump to first error if there is any
+        "cc 1 "jump to first error if there is any
     endif
 endfunction
 
