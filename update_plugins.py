@@ -39,6 +39,7 @@ vim-repeat https://github.com/tpope/vim-repeat
 vim-commentary https://github.com/tpope/vim-commentary
 vim-go https://github.com/fatih/vim-go
 netrw.vim https://github.com/vim-scripts/netrw.vim
+neocomplete https://github.com/Shougo/neocomplete.vim
 """.strip()
 
 GITHUB_ZIP = '%s/archive/master.zip'
