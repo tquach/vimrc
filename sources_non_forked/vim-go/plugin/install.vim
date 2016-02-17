@@ -12,16 +12,16 @@ else
 endif
 
 let s:packages = [
-            \ "github.com/nsf/gocode", 
-            \ "code.google.com/p/go.tools/cmd/goimports", 
-            \ "code.google.com/p/rog-go/exp/cmd/godef", 
-            \ "code.google.com/p/go.tools/cmd/oracle", 
-            \ "github.com/golang/lint/golint", 
+            \ "github.com/nsf/gocode",
+            \ "golang.org/x/tools/cmd/goimports",
+            \ "github.com/rogpeppe/godef",
+            \ "golang.org/x/tools/cmd/oracle",
+            \ "github.com/golang/lint/golint",
             \ "github.com/kisielk/errcheck",
             \ "github.com/jstemmer/gotags",
             \ ]
 
-function! s:CheckAndSetBinaryPaths() 
+function! s:CheckAndSetBinaryPaths()
     for pkg in s:packages
         let basename = fnamemodify(pkg, ":t")
         let binname = "go_" . basename . "_bin"
@@ -51,9 +51,9 @@ function! s:CheckBinaries()
     endif
 endfunction
 
-function! s:GoInstallBinaries(updateBin) 
+function! s:GoInstallBinaries(updateBin)
     if $GOPATH == ""
-        echohl Error 
+        echohl Error
         echomsg "vim.go: $GOPATH is not set"
         echohl None
         return
@@ -80,7 +80,7 @@ function! s:GoInstallBinaries(updateBin)
         endif
     endfor
 
-    let $GOBIN = s:go_bin_old_path 
+    let $GOBIN = s:go_bin_old_path
 endfunction
 
 " try to install at startup
