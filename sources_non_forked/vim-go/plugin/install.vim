@@ -15,7 +15,6 @@ let s:packages = [
             \ "github.com/nsf/gocode",
             \ "golang.org/x/tools/cmd/goimports",
             \ "github.com/rogpeppe/godef",
-            \ "golang.org/x/tools/cmd/oracle",
             \ "github.com/golang/lint/golint",
             \ "github.com/kisielk/errcheck",
             \ "github.com/jstemmer/gotags",
