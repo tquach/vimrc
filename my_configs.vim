@@ -6,6 +6,8 @@ let g:neocomplete#enable_at_startup = 1
 let g:neocomplete#enable_smart_case = 1
 " Set minimum syntax keyword length.
 let g:neocomplete#sources#syntax#min_keyword_length = 3
+" Show hidden files in CTRL+P
+let g:ctrlp_show_hidden = 1
 
 " Plugin key-mappings.
 inoremap <expr><C-g>     neocomplete#undo_completion()
@@ -47,22 +49,20 @@ au FileType go nmap gd <Plug>(go-def-tab)
 
 " Terraform configuration
 au FileType terraform setlocal commentstring=#%s
-au FileType terraform set tabstop=2 
-au FileType terraform set expandtab
-au FileType terraform set shiftwidth=2
+au FileType terraform set sw=2 ts=2 expandtab
 
 " Javascript
 let g:prettier#autoformat = 0
-autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue Prettier
-
+" Uncomment to format on save
+" autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue Prettier
 au filetype javascript set sw=2 ts=2 expandtab
 au FileType javascript nmap <Leader>p <Plug>(Prettier)
+
+" Markdown
+au filetype Markdown set sw=4 ts=4 noexpandtab
 
 " Misc
 au filetype yaml set sw=2 ts=2 expandtab
 au filetype make set sw=4 ts=4 noexpandtab
 
-let g:ctrlp_show_hidden = 1
-
-set grepprg=/usr/bin/grep
 set autoread
